@@ -1,7 +1,4 @@
-import {test} from 'mocha';
-import {expect} from 'chai';
-import {string, map, number, defaultValue, notNull, combine, array} from '../src/schemas';
-
+import {string, map, number, defaultValue, combine, array} from '../src';
 
 test('Test', () => {
     const baseQuestionSchema = map({
@@ -12,9 +9,8 @@ test('Test', () => {
         name: string(),
     });
 
-
     const schema = map({
-        id: combine(string(), number()),
+        id: defaultValue(Math.random),
         title: string(),
         questions: array(questionWithNameSchema),
     });
@@ -32,7 +28,9 @@ test('Test', () => {
         ]
     };
 
-    const parsed = schema.parse(data);
+    const parsed = schema.process(data);
     console.log(parsed);
-    expect(parsed.title).to.be.equal('bad title')
+    expect(parsed.title).toBe('bad title');
+    expect(!!parsed.id).toBe(true);
+    expect(parsed.questions.map(q => q.id).every(id => id > 0)).toBe(true);
 });
