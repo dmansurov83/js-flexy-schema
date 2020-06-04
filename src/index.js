@@ -1,35 +1,43 @@
 import ConstraintSchema from "./schemas/ConstraintSchema";
-import {NumberSchema, StringSchema} from "./schemas/PrimitiveSchemas";
+import {NumberSchema, StringSchema, BooleanSchema} from "./schemas/PrimitiveSchemas";
 import DefaultValueSchema from "./schemas/DefaultValueSchema";
 import CombinedSchema from "./schemas/CombinedSchema";
 import ArraySchema from "./schemas/ArraySchema";
 import MapSchema from "./schemas/MapSchema";
+import PredicateSchema from './schemas/PredicateSchema';
+
+export function predicateSchema(predicate) {
+    return new PredicateSchema(predicate);
+}
 
 export function notNull() {
     return new ConstraintSchema(data => data !== null && data !== undefined, 'Not null');
 }
 
-export function string(options) {
-    return new StringSchema();
+export function combine(...schemas) {
+    if (!schemas.length) {
+        throw new Error("No schemas")
+    }
+    if (schemas.length == 1) return schemas[0];
+    return new CombinedSchema(schemas);
+}
+
+export function string(...preprocessSchemas) {
+    return combine(...preprocessSchemas, new StringSchema());
+}
+
+export function number(...preprocessSchemas) {
+    return combine(...preprocessSchemas, new NumberSchema());
+}
+
+export function boolean(...preprocessSchemas){
+    return combine(...preprocessSchemas, new BooleanSchema());
 }
 
 export function defaultValue(value) {
     return new DefaultValueSchema(value);
 }
 
-export function combine(...schemas) {
-    return new CombinedSchema(schemas);
-}
-
-export function number(...preprocessSchemas) {
-    if (preprocessSchemas.length) {
-        return new CombinedSchema([
-            ...preprocessSchemas,
-            new NumberSchema(),
-        ]);
-    }
-    return new NumberSchema();
-}
 
 export function array(elementSchema) {
     return new ArraySchema(elementSchema);

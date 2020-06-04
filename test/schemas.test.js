@@ -1,5 +1,4 @@
-import {string, map, number, defaultValue, combine, array} from '../src';
-
+import {string, map, number, defaultValue, predicateSchema, array, boolean} from '../src';
 test('Test', () => {
     const baseQuestionSchema = map({
         id: number(defaultValue(Math.random)),
@@ -11,13 +10,17 @@ test('Test', () => {
 
     const schema = map({
         id: number(defaultValue(Math.random)),
+        price: number(predicateSchema(Math.round)),
         title: string(),
+        active: boolean(),
         questions: array(questionWithNameSchema),
     }, {parseMode:true});
 
     const data = {
         id: '123123',
         title: ' bad title',
+        price: '123.43212',
+        active: 1,
         anotherField: 'asd',
         questions: [
             {
@@ -32,6 +35,8 @@ test('Test', () => {
     const parsed = schema.process(data);
     console.log(parsed);
     expect(parsed.title).toBe('bad title');
+    expect(parsed.active).toBe(true);
+    expect(parsed.price).toBe(123);
     expect(typeof parsed.id).toBe('number');
     expect(parsed.anotherField).toBeUndefined();
     expect(!!parsed.id).toBe(true);

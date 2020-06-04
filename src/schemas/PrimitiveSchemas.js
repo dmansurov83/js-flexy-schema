@@ -12,3 +12,9 @@ export class NumberSchema extends Schema {
         return Number(data);
     }
 }
+
+export class BooleanSchema extends Schema {
+    process(data) {
+        return !!data;
+    }
+}
