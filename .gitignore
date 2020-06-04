@@ -1,6 +1,7 @@
 # Intellij
 .idea
 .idea/**
-*.iml
+*.iml,
+lib/
 
 node_modules
